@@ -30,7 +30,7 @@ import java.awt.font.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-public class JCTermAWTFrame  extends Frame implements ActionListener, Runnable{
+public class JCTermAWTFrame  extends java.awt.Frame implements ActionListener, Runnable{
 
   private static final int SHELL=0;
   private static final int SFTP=1;
@@ -301,7 +301,7 @@ public class JCTermAWTFrame  extends Frame implements ActionListener, Runnable{
 
   private Dialog getDialog(){
     if(dialog==null){
-      dialog=new Dialog(new Frame(), "", true);
+      dialog=new Dialog(new java.awt.Frame(), "", true);
       ok = new Button("OK");  
       Button cancel = new Button("CANCEL");  
       textf=new TextField(20);
@@ -673,7 +673,7 @@ public class JCTermAWTFrame  extends Frame implements ActionListener, Runnable{
     TextField textf=null;
     InputDialog(String title, String text, boolean passwd){
       super();
-      dialog=new Dialog(new Frame(), title, true);
+      dialog=new Dialog(new java.awt.Frame(), title, true);
       Button ok = new Button("OK");  
       Button cancel = new Button("CANCEL");  
       textf=new TextField(20);
@@ -711,7 +711,7 @@ public class JCTermAWTFrame  extends Frame implements ActionListener, Runnable{
     Dialog dialog=null;
     PromptDialog(String title, String msg){
       super();
-      dialog=new Dialog(new Frame(), title, true);
+      dialog=new Dialog(new java.awt.Frame(), title, true);
       Button ok = new Button("YES");  
       Button cancel = new Button("NO");  
       dialog.setLayout(new FlowLayout()); 
@@ -738,7 +738,7 @@ public class JCTermAWTFrame  extends Frame implements ActionListener, Runnable{
     Dialog dialog=null;
     MessageDialog(String title, String msg){
       super();
-      dialog=new Dialog(new Frame(), title, true);
+      dialog=new Dialog(new java.awt.Frame(), title, true);
       Button ok = new Button("OK");  
       dialog.setLayout(new FlowLayout()); 
       dialog.setLocation(100,50);

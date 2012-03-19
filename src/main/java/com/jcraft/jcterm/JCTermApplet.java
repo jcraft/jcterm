@@ -25,18 +25,14 @@ package com.jcraft.jcterm;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.InternalFrameAdapter;
+import javax.swing.event.InternalFrameEvent;
 
-public class JCTermApplet extends JApplet{
-  JCTermSwing term;
-  JInternalFrame frame;
-
-  public JCTermApplet(){
-    term=new JCTermSwing();
-  }
+public class JCTermApplet extends JApplet {
+  JDesktopPane desktop=new JDesktopPane();
 
   public void init(){
     setVisible(true);
-    JDesktopPane desktop=new JDesktopPane();
 
     if(Toolkit.getDefaultToolkit()
         .getDesktopProperty("win.mdi.backgroundColor")!=null)
@@ -47,14 +43,39 @@ public class JCTermApplet extends JApplet{
     content.add(desktop, BorderLayout.CENTER);
     desktop.setVisible(true);
 
-    frame=new JInternalFrame();
-    frame.setIconifiable(true);
+    JButton addButton = new JButton("New window");
+    addButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        openFrame(Frame.SHELL);
+      }
+    });
+    content.add(addButton, BorderLayout.NORTH);
+    addButton.setLocation(0, 0);
+    addButton.setVisible(true);
+
     setFocusable(true);
+  }
+
+  public void start(){
+    requestFocus();
+    setFocusable(true);
+    openFrame(Frame.SHELL);
+  }
+
+  public void openFrame(int mode){
+    final JCTermSwing term = new JCTermSwing();
+    JCTermSwingFrame jctermsf=new JCTermSwingFrame();
+    final MyFrame frame = new MyFrame(jctermsf);
+
+    frame.setTitle("JCTerm");
+    frame.setIconifiable(true);
 
     frame.getContentPane().add("Center", term);
 
-    JCTermSwingFrame jctermsf=new JCTermSwingFrame();
+    jctermsf.setCloseOnExit(true);
     jctermsf.setTerm(term);
+    jctermsf.setFrame(frame);
+
     frame.setJMenuBar(jctermsf.getJMenuBar());
 
     frame.pack();
@@ -74,32 +95,45 @@ public class JCTermApplet extends JApplet{
     }
     frame.setResizable(false);
 
-    frame.setLocation((getWidth()-frame.getWidth())/2, (getHeight()-frame
-        .getHeight())/2);
+    frame.setLocation((getWidth()-frame.getWidth())/2,
+                      (getHeight()-frame.getHeight())/2);
 
     ComponentAdapter l = new ComponentAdapter(){
       public void componentResized(ComponentEvent e){
-        Component c=e.getComponent();
+        Component c = e.getComponent();
+        Container cp = ((JInternalFrame)c).getContentPane();
         int cw=c.getWidth();
         int ch=c.getHeight();
-        int cwm=(c.getWidth()-((JInternalFrame)c).getContentPane().getWidth());
-        int chm=(c.getHeight()-((JInternalFrame)c).getContentPane().getHeight());
+        int cwm=c.getWidth()-cp.getWidth();
+        int chm=c.getHeight()-cp.getHeight();
         cw-=cwm;
         ch-=chm;
-        JCTermApplet.this.term.setSize(cw, ch);
+        term.setSize(cw, ch);
       }
     };
     frame.addComponentListener(l);
     addKeyListener(term);
+
     frame.setResizable(true);
     frame.setMaximizable(true);
 
-    //jctermsf.openSession();
+    jctermsf.openSession();
   }
 
-  public void start(){
-    requestFocus();
-    //    frame.requestFocus();
-    //term.kick();
+  class MyFrame extends JInternalFrame implements Frame {
+    JCTermSwingFrame jctermsf;
+    InternalFrameAdapter l = new InternalFrameAdapter(){
+      public void internalFrameClosing(InternalFrameEvent e){
+        jctermsf.dispose_connection();
+      }
+    };
+    MyFrame(JCTermSwingFrame jctermsf){
+      this.jctermsf = jctermsf;
+      setClosable(true);
+      addInternalFrameListener(l);
+    }
+    public void openFrame(int mode){
+      JCTermApplet.this.openFrame(mode);
+    }
   }
 }

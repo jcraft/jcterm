@@ -28,15 +28,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 
-public class JCTermSwingFrame extends JFrame implements ActionListener,
-    Runnable{
+public class JCTermSwingFrame extends JFrame
+                              implements Frame, ActionListener, Runnable{
   static String COPYRIGHT="JCTerm 0.0.9\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"
       +"Official Homepage: http://www.jcraft.com/jcterm/\n"
       +"This software is licensed under GNU LGPL.";
-
-  private static final int SHELL=0;
-  private static final int SFTP=1;
-  private static final int EXEC=2;
 
   private int mode=SHELL;
 
@@ -63,12 +59,27 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
 
   private Connection connection=null;
 
+  private Channel channel=null;
+
+  private boolean close_on_exit = true;
+
+  private Frame frame = this;
+
+  public boolean getCloseOnExit(){
+    return close_on_exit;
+  }
+
+  public void setCloseOnExit(boolean close_on_exit) {
+    this.close_on_exit = close_on_exit;
+  }
+
   public JCTermSwingFrame(){
   }
 
   public JCTermSwingFrame(String name){
     super(name);
 
+    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     enableEvents(AWTEvent.KEY_EVENT_MASK);
     addWindowListener(new WindowAdapter(){
       public void windowClosing(WindowEvent e){
@@ -217,6 +228,26 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
     }
     setTitle("JCTerm");
     thread=null;
+
+    dispose_connection();
+
+    if(getCloseOnExit()){
+      frame.setVisible(false);
+      frame.dispose();
+    }
+    else{ 
+      term.clear();
+      term.redraw(0, 0, term.getWidth(), term.getHeight());
+    }
+  }
+
+  void dispose_connection(){
+    synchronized(this){
+      if(channel!=null){
+        channel.disconnect();
+        channel=null;
+      }
+    }
   }
 
   public class MyUserInfo implements UserInfo, UIKeyboardInteractive{
@@ -446,16 +477,23 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
 
   public void actionPerformed(ActionEvent e){
     String action=e.getActionCommand();
+
+    int _mode = SHELL;
+    if(action.equals("Open SHELL Session...")){
+      _mode=SHELL;
+    }
+    else if(action.equals("Open SFTP Session...")){
+      _mode=SFTP;
+    }
+
     if(action.equals("Open SHELL Session...")
         ||action.equals("Open SFTP Session...")){
       if(thread==null){
-        if(action.equals("Open SHELL Session...")){
-          mode=SHELL;
-        }
-        else if(action.equals("Open SFTP Session...")){
-          mode=SFTP;
-        }
+        mode=_mode;
         openSession();
+      }
+      else {
+        frame.openFrame(_mode);
       }
     }
     else if(action.equals("HTTP...")){
@@ -668,6 +706,21 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
 
   public Term getTerm(){
     return term;
+  }
+
+  public void openFrame(int _mode){
+    JCTermSwingFrame c = new JCTermSwingFrame("JCTerm");
+    c.mode=_mode;
+    c.setXForwarding(true);
+    c.setXPort(xport);
+    c.setXHost(xhost);
+    c.setLocationRelativeTo(null);
+    c.setVisible(true);
+    c.setResizable(true);
+  }
+
+  void setFrame(Frame frame){
+    this.frame=frame;
   }
 
   public static void main(String[] arg){
