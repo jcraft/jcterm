@@ -103,10 +103,11 @@ public class JCTermSwingFrame extends JFrame
     ComponentAdapter l = new ComponentAdapter(){
       public void componentResized(ComponentEvent e){
         Component c=e.getComponent();
+        Container cp = ((JFrame)c).getContentPane();
         int cw=c.getWidth();
         int ch=c.getHeight();
-        int cwm=(c.getWidth()-((JFrame)c).getContentPane().getWidth());
-        int chm=(c.getHeight()-((JFrame)c).getContentPane().getHeight());
+        int cwm=c.getWidth()-cp.getWidth();
+        int chm=c.getHeight()-cp.getHeight();
         cw-=cwm;
         ch-=chm;
         JCTermSwingFrame.this.term.setSize(cw, ch);
