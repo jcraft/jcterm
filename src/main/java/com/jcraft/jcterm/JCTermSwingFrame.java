@@ -34,6 +34,11 @@ public class JCTermSwingFrame extends JFrame
       +"Official Homepage: http://www.jcraft.com/jcterm/\n"
       +"This software is licensed under GNU LGPL.";
 
+  private static int counter=1;
+  static void resetCounter(){
+    counter=1;
+  } 
+
   private int mode=SHELL;
 
   private String xhost="127.0.0.1";
@@ -217,7 +222,7 @@ public class JCTermSwingFrame extends JFrame
             fchannel.disconnect();
           }
         };
-        setTitle(user+"@"+host+(port!=22 ? new Integer(port).toString() : ""));
+        frame.setTitle(user+"@"+host+(port!=22 ? (":"+new Integer(port).toString()) : "")+"#"+counter++);
         term.requestFocus();
         term.start(connection);
       }
@@ -226,7 +231,7 @@ public class JCTermSwingFrame extends JFrame
       }
       break;
     }
-    setTitle("JCTerm");
+    frame.setTitle("JCTerm");
     thread=null;
 
     dispose_connection();

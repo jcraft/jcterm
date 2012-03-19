@@ -32,6 +32,8 @@ public class JCTermApplet extends JApplet {
   JDesktopPane desktop=new JDesktopPane();
 
   public void init(){
+    JCTermSwingFrame.resetCounter();
+
     setVisible(true);
 
     if(Toolkit.getDefaultToolkit()
