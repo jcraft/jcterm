@@ -223,7 +223,7 @@ public class JCTermSwingFrame extends JFrame
             fchannel.disconnect();
           }
         };
-        frame.setTitle(user+"@"+host+(port!=22 ? (":"+new Integer(port).toString()) : "")+"#"+counter++);
+        frame.setTitle("["+(counter++)+"] "+user+"@"+host+(port!=22 ? (":"+new Integer(port).toString()) : ""));
         term.requestFocus();
         term.start(connection);
       }
