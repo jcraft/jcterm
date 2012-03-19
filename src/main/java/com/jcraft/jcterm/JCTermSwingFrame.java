@@ -278,9 +278,23 @@ public class JCTermSwingFrame extends JFrame
 
     public boolean promptPassword(String message){
       Object[] ob= {pword};
-      int result=JOptionPane.showConfirmDialog(JCTermSwingFrame.this.term, ob,
-          message, JOptionPane.OK_CANCEL_OPTION);
-      if(result==JOptionPane.OK_OPTION){
+      JPanel panel=new JPanel();
+      panel.add(pword);
+      pword.requestFocusInWindow();      
+      JOptionPane pane = new JOptionPane(panel,
+                                         JOptionPane.QUESTION_MESSAGE,
+                                         JOptionPane.OK_CANCEL_OPTION){
+        public void selectInitialValue() {
+        }
+      };
+
+      JDialog dialog = pane.createDialog(JCTermSwingFrame.this.term, 
+                                         message);
+      dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+      dialog.setVisible(true);
+      Object o = pane.getValue();
+
+      if(o != null && ((Integer)o).intValue()==JOptionPane.OK_OPTION){
         passwd=pword.getText();
         return true;
       }
@@ -330,14 +344,26 @@ public class JCTermSwingFrame extends JFrame
         }
         else{
           texts[i]=new JPasswordField(20);
+          texts[i].requestFocusInWindow();
         }
         panel.add(texts[i], gbc);
         gbc.gridy++;
       }
-
-      if(JOptionPane.showConfirmDialog(JCTermSwingFrame.this.term, panel,
-          destination+": "+name, JOptionPane.OK_CANCEL_OPTION,
-          JOptionPane.QUESTION_MESSAGE)==JOptionPane.OK_OPTION){
+      for(int i=prompt.length-1; i>0; i--){
+        texts[i].requestFocusInWindow();
+      }
+      JOptionPane pane = new JOptionPane(panel,
+                                         JOptionPane.QUESTION_MESSAGE,
+                                         JOptionPane.OK_CANCEL_OPTION){
+        public void selectInitialValue() {
+        }
+      };
+      JDialog dialog = pane.createDialog(JCTermSwingFrame.this.term, 
+                                         destination+": "+name);
+      dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+      dialog.setVisible(true);
+      Object o = pane.getValue();
+      if(o != null && ((Integer)o).intValue()==JOptionPane.OK_OPTION){
         String[] response=new String[prompt.length];
         for(int i=0; i<prompt.length; i++){
           response[i]=texts[i].getText();
