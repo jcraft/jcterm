@@ -152,17 +152,7 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
           UserInfo ui=new MyUserInfo();
 
           jschsession=JSchSession.getSession(user, null, host, port, ui, proxy);
-          java.util.Properties config=new java.util.Properties();
-          if(compression==0){
-            config.put("compression.s2c", "none");
-            config.put("compression.c2s", "none");
-          }
-          else{
-            config.put("compression.s2c", "zlib,none");
-            config.put("compression.c2s", "zlib,none");
-          }
-          jschsession.getSession().setConfig(config);
-          jschsession.getSession().rekey();
+          setCompression(compression);
         }
         catch(Exception e){
           //System.out.println(e);
@@ -388,6 +378,25 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
     if(compression<0||9<compression)
       return;
     this.compression=compression;
+    if(jschsession!=null){
+      if(compression==0){
+        jschsession.getSession().setConfig("compression.s2c", "none");
+        jschsession.getSession().setConfig("compression.c2s", "none");
+	jschsession.getSession().setConfig("compression_level", "0");
+      }
+     else{
+       jschsession.getSession().setConfig("compression.s2c", "zlib@openssh.com,zlib,none");
+       jschsession.getSession().setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
+       jschsession.getSession().setConfig("compression_level", 
+                                          new Integer(compression).toString());
+     }
+     try{
+       jschsession.getSession().rekey();
+     }
+     catch(Exception e){
+       System.out.println(e);
+     }
+    }
   }
 
   public int getCompression(){
@@ -532,6 +541,7 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
       try{
         if(foo!=null){
           compression=Integer.parseInt(foo);
+          setCompression(compression);
         }
       }
       catch(Exception ee){
