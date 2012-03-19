@@ -77,13 +77,7 @@ public class JCTermApplet extends JApplet{
     frame.setLocation((getWidth()-frame.getWidth())/2, (getHeight()-frame
         .getHeight())/2);
 
-    ComponentListener l=new ComponentListener(){
-      public void componentHidden(ComponentEvent e){
-      }
-
-      public void componentMoved(ComponentEvent e){
-      }
-
+    ComponentAdapter l = new ComponentAdapter(){
       public void componentResized(ComponentEvent e){
         Component c=e.getComponent();
         int cw=c.getWidth();
@@ -93,9 +87,6 @@ public class JCTermApplet extends JApplet{
         cw-=cwm;
         ch-=chm;
         JCTermApplet.this.term.setSize(cw, ch);
-      }
-
-      public void componentShown(ComponentEvent e){
       }
     };
     frame.addComponentListener(l);

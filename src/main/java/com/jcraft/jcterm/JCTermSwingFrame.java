@@ -84,15 +84,8 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
     pack();
     term.setVisible(true);
 
-    ComponentListener l=new ComponentListener(){
-      public void componentHidden(ComponentEvent e){
-      }
-
-      public void componentMoved(ComponentEvent e){
-      }
-
+    ComponentAdapter l = new ComponentAdapter(){
       public void componentResized(ComponentEvent e){
-        System.out.println(e);
         Component c=e.getComponent();
         int cw=c.getWidth();
         int ch=c.getHeight();
@@ -101,9 +94,6 @@ public class JCTermSwingFrame extends JFrame implements ActionListener,
         cw-=cwm;
         ch-=chm;
         JCTermSwingFrame.this.term.setSize(cw, ch);
-      }
-
-      public void componentShown(ComponentEvent e){
       }
     };
     addComponentListener(l);
