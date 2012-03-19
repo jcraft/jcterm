@@ -1,0 +1,153 @@
+
+                                   JCTerm
+
+                               JCraft's Term
+                         by ymnk@jcraft.com, JCraft,Inc.
+
+                          http://www.jcraft.com/jcterm/
+
+Last modified: Thu Feb 17 14:18:51 UTC 2005
+
+Description
+===========
+JCTerm(JCraft's Term) is a pure Java VT100 terminal emulator for
+SSH2 sessions.  This terminal emulator also allows you to enjoy
+port forwarding, X11 forwarding, etc,.
+JCTerm is licensed under GNU LGPL and easily integrated into you programs.
+
+
+Documentation
+=============
+* README files all over the source tree have info related to the stuff
+  in the directories. 
+
+
+Directories & Files in the Source Tree
+======================================
+* src/com/jcraft/jcterm has source trees of JCTerm
+
+
+Features
+========
+* JCTerm requires jsch(http://www.jcraft.com/jsch/) 0.1.0 or later.
+* JCTerm requires J2SE 1.4.
+* JCTermMIDP runs on J2ME/CLDC/MIDP2.0
+* JCTermJ2MECDC runs on J2ME/CDC/PP 1.0
+* VT100 emulation
+* SSH2 protocol support.
+* X11 forwarding.
+* connection through HTTP proxy.
+* connection through SOCKS5 proxy.
+* local/remote port forwarding.
+* anti-aliasing text.
+* sftp support.
+* packet compression support
+* JCTerm is licensed under GNU LGPL.
+
+
+How To Try
+==========
+This archive does not include java byte code, so please compile
+the source code by your self.  Suppose you have jsch-?.?.?.zip and 
+jcterm-?.?.?.zip
+
+First of all, please compile jsch.
+  $ unzip jsch-?.?.?.zip
+  $ cd jsch-?.?.?/src
+  $ javac com/jcraft/jsch/*java com/jcraft/jsch/jce/*java \
+          com/jcraft/jzlib/*.java
+
+Then, please compile jcterm
+  $ cd ../..
+  $ unzip jcterm-?.?.?.zip
+  $ cd jcterm-?.?.?/src
+  $ CLASSPATH=.:../../jsch-?.?.?/src javac com/jcraft/jcterm/*.java
+
+Ok, you can try it as follow,
+  $ CLASSPATH=.:../../jsch-?.?.?/src java com.jcraft.jcterm.JCTerm
+
+If you need the packet compression support, you have to put the jar file of 
+jzlib(http://www.jcraft.com/jzlib) in the CLASSPATH.
+
+
+On-Line Demo
+============
+On-Line demo is available at http://wiredx.net/jcterm/ .
+On this page, the digitally signed JCterm applet is provided and
+you can try JCterm on the web browser.  In starting this applet,
+you will receive a Java Security prompt asking to deny/grant to run it.
+
+
+JCTerm for J2ME/CDC platform
+============================
+JCTermJ2MECDC is the port of JCTerm to J2ME/CDC platform.
+
+  How to Compile
+  ==============
+  To compile this program, you need BouncyCastle Crypto API
+  (http://www.bouncycastle.org/) 1.26 or later and JSch for 
+  J2ME/CDC, which is available at http://j2me.jsch.org/ .  
+
+  Confirmed Devices
+  =================
+  We have heard that this program is running on the following device.
+    * SHARP Zaurus SL-C700
+      The binary for this device is available at http://j2me.jsch.org/ .
+    * SHARP Zaurus SL-C760
+
+
+JCTerm for J2ME/CLDC/MIDP2.0
+============================
+JCTermMIDP is the port of JCTerm to J2ME/CLDC/MIDP2.0 platform.
+
+  How to Compile
+  ==============
+  To compile this midlet, you need BouncyCastle Crypto API
+  (http://www.bouncycastle.org/) 1.26 or later and JSch for 
+  J2ME/CLDC/MIDP2.0, which is available at http://j2me.jsch.org/ .  
+  We have confirmed that this midlet is compilable on Sun's Wireless 
+  Toolkit 2.2. You have to delete following files before compilation process,
+    * src/com/jcraft/jcterm/JCTerm.java
+    * src/com/jcraft/jcterm/JCTermAWT.java
+    * src/com/jcraft/jcterm/JCTermApplet.java
+    * src/com/jcraft/jcterm/JCTermJ2MECDC.java
+    * src/com/jcraft/jcterm/Sftp.java
+    * src/com/jcraft/jcterm/Splash.java
+  The jar and jad files are available at http://j2me.jsch.org/ .
+
+  Public-key Authentication
+  =========================
+  Current version supports password authentication and public-key 
+  authentication.  This midlet will allow you to install private keys 
+  into MIDP's RecordStore.  After staring this midlet, you will find 
+  the checkbox 'Install private key',  If you select this checkbox and 
+  connect to the remote host with password authentication , following commands
+    'cat ~/.ssh/id_rsa' and 'cat ~/.ssh/id_dsa'
+  will be remotely execed and outputs will be stored locally.
+  In the next time, public-key authentication will be tried.
+  Of course, we strongly recommend to encrypt id_rsa' and 'id_dsa'.
+
+  Confirmed Devices
+  =================
+  We have heard that this midlet is running on the following device.
+    * Motorola c650
+
+
+TODO
+====
+* VT100 emulation is incomplete.
+
+
+Copyrights & Disclaimers
+========================
+JCterm is copyrighted by JCraft,Inc. and is licensed through the
+GNU Library General Public License. 
+Read the COPYING file for the complete license.
+
+
+If you have any comments, suggestions and questions, write us 
+at ymnk@jcraft.com
+
+
+``SSH is a registered trademark and Secure Shell is a trademark of
+SSH Communications Security Corp (www.ssh.com)''.
