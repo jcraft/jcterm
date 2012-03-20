@@ -33,6 +33,12 @@ public class JCTermApplet extends JApplet {
 
   public void init(){
     JCTermSwingFrame.resetCounter();
+    String s;
+
+    s = getParameter("jcterm.destinations");
+    if(s!=null){
+      JCTermSwingFrame.setDestinations(s);
+    }
 
     setVisible(true);
 
