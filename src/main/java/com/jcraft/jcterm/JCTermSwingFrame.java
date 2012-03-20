@@ -37,7 +37,12 @@ public class JCTermSwingFrame extends JFrame
   private static int counter=1;
   static void resetCounter(){
     counter=1;
-  } 
+  }
+
+  private static String[] destinations = new String[0]; 
+  static synchronized void setDestinations(String _destinations){
+    destinations = _destinations.split(",");
+  }
 
   private int mode=SHELL;
 
@@ -126,12 +131,14 @@ public class JCTermSwingFrame extends JFrame
   }
 
   public void run(){
+    String destination = null;
     while(thread!=null){
       try{
         int port=22;
         try{
-          String _host=JOptionPane.showInputDialog(term,
-              "Enter username@hostname", "");
+          String[] destinations = loadDestinations();
+          String _host = promptDestination(term, destinations);
+          destination = _host;
           if(_host==null){
             break;
           }
@@ -160,6 +167,8 @@ public class JCTermSwingFrame extends JFrame
 
           jschsession=JSchSession.getSession(user, null, host, port, ui, proxy);
           setCompression(compression);
+
+          saveDestination(destination);
         }
         catch(Exception e){
           //System.out.println(e);
@@ -740,6 +749,23 @@ public class JCTermSwingFrame extends JFrame
     return term;
   }
 
+  private static synchronized void saveDestination(String d){
+    int i=0;
+    while(i<destinations.length){
+      if(d.equals(destinations[i]))
+        return;
+      i++;
+    }
+    String[] foo = new String[destinations.length+1];
+    System.arraycopy(destinations, 0, foo, 1, destinations.length);
+    foo[0]=d;
+    destinations=foo;
+  }
+
+  private String[] loadDestinations(){
+    return destinations;
+  }
+
   public void openFrame(int _mode){
     JCTermSwingFrame c = new JCTermSwingFrame("JCTerm");
     c.mode=_mode;
@@ -749,6 +775,39 @@ public class JCTermSwingFrame extends JFrame
     c.setLocationRelativeTo(null);
     c.setVisible(true);
     c.setResizable(true);
+  }
+
+  private String promptDestination(JComponent term, String[] destinations){
+    JComboBox jb = new JComboBox();
+    jb.setEditable(true);
+
+    for(int i=0; i<destinations.length; i++){
+      jb.addItem(destinations[i]);
+    }
+
+    JPanel panel=new JPanel();
+    jb.requestFocusInWindow();      
+    JOptionPane pane = new JOptionPane(jb,
+                                       JOptionPane.QUESTION_MESSAGE,
+                                       JOptionPane.OK_CANCEL_OPTION){
+      public void selectInitialValue() {
+      }
+    };
+
+    JDialog dialog = pane.createDialog(JCTermSwingFrame.this.term, 
+                                       "Enter username@hostname");
+    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    dialog.setVisible(true);
+    Object o = pane.getValue();
+
+    String d = null;
+    if(o != null && ((Integer)o).intValue()==JOptionPane.OK_OPTION){
+      d=(String)jb.getSelectedItem();
+    }
+    if(d == null || d.length()==0)
+      return null;
+    else
+      return d;
   }
 
   void setFrame(Frame frame){
