@@ -30,5 +30,8 @@ interface Frame {
   void openFrame(int mode);
   void setTitle(String name);
   void setVisible(boolean visible);
+  void setSize(int w, int h);
+  int getWidth();
+  int getHeight();
   void dispose();
 }

@@ -75,6 +75,8 @@ public class JCTermSwingFrame extends JFrame
 
   private Frame frame = this;
 
+  private int font_size = 14;
+
   public boolean getCloseOnExit(){
     return close_on_exit;
   }
@@ -119,6 +121,8 @@ public class JCTermSwingFrame extends JFrame
       }
     };
     addComponentListener(l);
+
+    setFontSize(font_size);
 
     openSession();
   }
@@ -459,6 +463,14 @@ public class JCTermSwingFrame extends JFrame
        System.out.println(e);
      }
     }
+  }
+
+  public void setFontSize(int size){
+    this.font_size = size;
+    int mwidth = frame.getWidth()-term.getTermWidth();
+    int mheight = frame.getHeight()-term.getTermHeight();
+    term.setFont("Monospaced-"+size);
+    frame.setSize(mwidth+term.getTermWidth(), mheight+term.getTermHeight());
   }
 
   public int getCompression(){

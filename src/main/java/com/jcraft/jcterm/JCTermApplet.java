@@ -31,6 +31,8 @@ import javax.swing.event.InternalFrameEvent;
 public class JCTermApplet extends JApplet {
   JDesktopPane desktop=new JDesktopPane();
 
+  private int font_size = 14;
+
   public void init(){
     JCTermSwingFrame.resetCounter();
     String s;
@@ -38,6 +40,16 @@ public class JCTermApplet extends JApplet {
     s = getParameter("jcterm.destinations");
     if(s!=null){
       JCTermSwingFrame.setDestinations(s);
+    }
+
+    s = getParameter("jcterm.font_size");
+    if(s!=null){
+      try{
+        font_size = Integer.parseInt(s);
+      }
+      catch(NumberFormatException e){
+        System.err.println("jcterm.font_size: "+s);
+      }
     }
 
     setVisible(true);
@@ -90,22 +102,6 @@ public class JCTermApplet extends JApplet {
 
     desktop.add(frame);
 
-    term.setVisible(true);
-    frame.setVisible(true);
-
-    frame.setResizable(true);
-    {
-      int foo=term.getTermWidth();
-      int bar=term.getTermHeight();
-      foo+=(frame.getWidth()-frame.getContentPane().getWidth());
-      bar+=(frame.getHeight()-frame.getContentPane().getHeight());
-      frame.setSize(foo, bar);
-    }
-    frame.setResizable(false);
-
-    frame.setLocation((getWidth()-frame.getWidth())/2,
-                      (getHeight()-frame.getHeight())/2);
-
     ComponentAdapter l = new ComponentAdapter(){
       public void componentResized(ComponentEvent e){
         Component c = e.getComponent();
@@ -122,8 +118,16 @@ public class JCTermApplet extends JApplet {
     frame.addComponentListener(l);
     addKeyListener(term);
 
+    term.setVisible(true);
+    frame.setVisible(true);
+
     frame.setResizable(true);
     frame.setMaximizable(true);
+
+    jctermsf.setFontSize(font_size);
+
+    frame.setLocation((getWidth()-frame.getWidth())/2,
+                      (getHeight()-frame.getHeight())/2);
 
     jctermsf.openSession();
   }

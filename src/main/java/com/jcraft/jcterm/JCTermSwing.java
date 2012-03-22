@@ -80,15 +80,6 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
 
     setFont("Monospaced-14");
 
-    background=new BufferedImage(char_width, char_height,
-        BufferedImage.TYPE_INT_RGB);
-    {
-      Graphics2D foog=(Graphics2D)(background.getGraphics());
-      foog.setColor(getBackGround());
-      foog.fillRect(0, 0, char_width, char_height);
-      foog.dispose();
-    }
-
     setSize(getTermWidth(), getTermHeight());
 
     if(splash!=null)
@@ -108,7 +99,7 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
     //  setOpaque(true);
   }
 
-  private void setFont(String fname){
+  void setFont(String fname){
     font=java.awt.Font.decode(fname);
     BufferedImage img=new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics=(Graphics2D)(img.getGraphics());
@@ -130,8 +121,18 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
       char_height=(int)(fo.getHeight())+(line_space*2);
       descent+=line_space;
     }
+
     img.flush();
     graphics.dispose();
+
+    background=new BufferedImage(char_width, char_height,
+        BufferedImage.TYPE_INT_RGB);
+    {
+      Graphics2D foog=(Graphics2D)(background.getGraphics());
+      foog.setColor(getBackGround());
+      foog.fillRect(0, 0, char_width, char_height);
+      foog.dispose();
+    }
   }
 
   public void setSize(int w, int h){
@@ -154,6 +155,7 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
     graphics.setFont(font);
 
     clear_area(0, 0, w, h);
+    redraw(0, 0, w, h);
 
     if(imgOrg!=null){
       Shape clip=graphics.getClip();
