@@ -729,14 +729,51 @@ public class JCTermSwingFrame extends JFrame
     mb.add(m);
 
     m=new JMenu("Etc");
+
     mi=new JMenuItem("AntiAliasing");
     mi.addActionListener(this);
     mi.setActionCommand("AntiAliasing");
     m.add(mi);
+
     mi=new JMenuItem("Compression...");
     mi.addActionListener(this);
     mi.setActionCommand("Compression...");
     m.add(mi);
+
+    JMenu mcolor=new JMenu("Color");
+    final ActionListener mcolor_action = new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        String _fg_bg=e.getActionCommand();
+        String[] tmp = _fg_bg.split(":");
+        if(tmp.length==2){
+          Color fg = JCTermSwing.toColor(tmp[0]);
+          Color bg = JCTermSwing.toColor(tmp[1]);
+          if(fg!=null && bg!=null)
+            setFgBg(fg, bg);
+        }
+      }
+    };
+    mcolor.addMenuListener(new MenuListener(){
+      public void menuSelected(MenuEvent me){
+        JMenu jm = (JMenu)me.getSource();
+        for(int i=0; i < fg_bg.length; i++){
+          String[] tmp = fg_bg[i];
+          JMenuItem mi = new JMenuItem("ABC");
+          mi.setForeground(JCTermSwing.toColor(tmp[0]));
+          mi.setBackground(JCTermSwing.toColor(tmp[1]));
+          mi.setActionCommand(tmp[0]+":"+tmp[1]);
+          mi.addActionListener(mcolor_action);
+          jm.add(mi);
+        }
+      }
+      public void menuDeselected(MenuEvent me){
+        JMenu jm = (JMenu)me.getSource();
+        jm.removeAll();
+      }
+      public void menuCanceled(MenuEvent arg){ }
+    });
+    m.add(mcolor);
+
     mb.add(m);
 
     m=new JMenu("Help");
