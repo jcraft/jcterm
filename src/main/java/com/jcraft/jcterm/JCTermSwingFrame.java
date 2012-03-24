@@ -774,6 +774,38 @@ public class JCTermSwingFrame extends JFrame
     });
     m.add(mcolor);
 
+    JMenu mfsize=new JMenu("Font size");
+    final ActionListener mfsize_action = new ActionListener(){
+      public void actionPerformed(ActionEvent e){
+        String _font_size=e.getActionCommand();
+        try {
+          setFontSize(Integer.parseInt(_font_size));
+        }
+        catch(NumberFormatException nfe){
+        }
+      }
+    };
+    mfsize.addMenuListener(new MenuListener(){
+      public void menuSelected(MenuEvent me){
+        JMenuItem mi;
+        JMenu jm = (JMenu)me.getSource();
+        mi = new JMenuItem("Smaller ("+(font_size-1)+")");;
+        mi.setActionCommand(""+(font_size-1));
+        mi.addActionListener(mfsize_action);
+        jm.add(mi);
+        mi = new JMenuItem("Larger ("+(font_size+1)+")");
+        mi.setActionCommand(""+(font_size+1));
+        mi.addActionListener(mfsize_action);
+        jm.add(mi);
+      }
+      public void menuDeselected(MenuEvent me){
+        JMenu jm = (JMenu)me.getSource();
+        jm.removeAll();
+      }
+      public void menuCanceled(MenuEvent arg){ }
+    });
+    m.add(mfsize);
+
     mb.add(m);
 
     m=new JMenu("Help");
