@@ -42,6 +42,9 @@ public class JCTermSwingFrame extends JFrame
   private static String[] destinations = new String[0]; 
   static synchronized void setDestinations(String _destinations){
     destinations = _destinations.split(",");
+    for(int i=0; i<destinations.length; i++){
+      destinations[i] = destinations[i].trim();
+    }
   }
 
   private int mode=SHELL;
