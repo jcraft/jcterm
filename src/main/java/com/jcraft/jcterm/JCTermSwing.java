@@ -164,12 +164,7 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
       graphics.setClip(clip);
     }
 
-    if(cursor_graphics!=null)
-      cursor_graphics.dispose();
-
-    cursor_graphics=(Graphics2D)(img.getGraphics());
-    cursor_graphics.setColor(getForeGround());
-    cursor_graphics.setXORMode(getBackGround());
+    resetCursorGraphics();
 
     setAntiAliasing(antialiasing);
 
@@ -492,6 +487,15 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
     if(reverse)
       return fground;
     return bground;
+  }
+
+  void resetCursorGraphics(){
+    if(cursor_graphics!=null)
+      cursor_graphics.dispose();
+
+    cursor_graphics=(Graphics2D)(img.getGraphics());
+    cursor_graphics.setColor(getForeGround());
+    cursor_graphics.setXORMode(getBackGround());
   }
 
   public Object getColor(int index){

@@ -879,6 +879,7 @@ public class JCTermSwingFrame extends JFrame
     term.setDefaultForeGround(fg);
     term.setBackGround(bg);
     term.setDefaultBackGround(bg);
+    term.resetCursorGraphics();
     term.clear();
     term.redraw(0, 0, term.getWidth(), term.getHeight());
   }
