@@ -26,7 +26,9 @@ import com.jcraft.jsch.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import java.io.*;
+import java.util.Vector;
 
 public class JCTermSwingFrame extends JFrame
                               implements Frame, ActionListener, Runnable{
@@ -79,6 +81,9 @@ public class JCTermSwingFrame extends JFrame
   private Frame frame = this;
 
   private int font_size = 14;
+
+  private String[][] fg_bg = {{"#000000","#ffffff"},
+                              {"#ffffff","#000000"}};
 
   public boolean getCloseOnExit(){
     return close_on_exit;
@@ -474,6 +479,8 @@ public class JCTermSwingFrame extends JFrame
     int mheight = frame.getHeight()-term.getTermHeight();
     term.setFont("Monospaced-"+size);
     frame.setSize(mwidth+term.getTermWidth(), mheight+term.getTermHeight());
+    term.clear();
+    term.redraw(0, 0, term.getWidth(), term.getHeight());
   }
 
   public int getCompression(){
@@ -792,6 +799,42 @@ public class JCTermSwingFrame extends JFrame
     c.setResizable(true);
   }
 
+  void setFgBg(String[][] fg_bg){
+    this.fg_bg = fg_bg;
+    setFgBg(JCTermSwing.toColor(this.fg_bg[0][0]),
+            JCTermSwing.toColor(this.fg_bg[0][1]));
+  }
+
+  private void setFgBg(Color fg, Color bg){
+    term.setForeGround(fg);
+    term.setDefaultForeGround(fg);
+    term.setBackGround(bg);
+    term.setDefaultBackGround(bg);
+    term.clear();
+    term.redraw(0, 0, term.getWidth(), term.getHeight());
+  }
+
+  static String[][] parseFgBg(String fg_bg){
+    Vector<String[]> v = new Vector<String[]>();
+    String[] _fg_bg = fg_bg.split(",");
+    for(int i=0; i < _fg_bg.length; i++){
+      String[] tmp = _fg_bg[i].split(":");
+      if(tmp.length!=2)
+        continue;
+      Color fg = JCTermSwing.toColor(tmp[0]);
+      Color bg = JCTermSwing.toColor(tmp[1]);
+      if(fg!=null && bg!=null){ 
+        v.addElement(tmp);
+      }
+    }
+    if(v.size()==0) return null;
+    String[][] c = new String[v.size()][];
+    for(int i=0; i<v.size(); i++){
+      c[i]=v.elementAt(i);
+    }
+    return c;
+  }
+
   private String promptDestination(JComponent term, String[] destinations){
     JComboBox jb = new JComboBox();
     jb.setEditable(true);
@@ -831,6 +874,7 @@ public class JCTermSwingFrame extends JFrame
 
   public static void main(String[] arg){
     final JCTermSwingFrame frame=new JCTermSwingFrame("JCTerm");
+    frame.setCloseOnExit(false);
     frame.setVisible(true);
     frame.setResizable(true);
   }

@@ -447,9 +447,13 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
     this.compression=compression;
   }
 
-  private java.awt.Color toColor(Object o){
+  static java.awt.Color toColor(Object o){
     if(o instanceof String){
-      return java.awt.Color.getColor((String)o);
+      try{
+        return java.awt.Color.decode(((String)o).trim());
+      }
+      catch(java.lang.NumberFormatException e){ }
+      return java.awt.Color.getColor(((String)o).trim());
     }
     if(o instanceof java.awt.Color){
       return (java.awt.Color)o;

@@ -32,6 +32,8 @@ public class JCTermApplet extends JApplet {
   JDesktopPane desktop=new JDesktopPane();
 
   private int font_size = 14;
+  private String[][] fg_bg = {{"#000000", "#ffffff"},
+                              {"#ffffff", "#000000"}};
 
   public void init(){
     JCTermSwingFrame.resetCounter();
@@ -48,8 +50,17 @@ public class JCTermApplet extends JApplet {
         font_size = Integer.parseInt(s);
       }
       catch(NumberFormatException e){
-        System.err.println("jcterm.font_size: "+s);
+        System.err.println("invalid jcterm.font_size: "+s);
       }
+    }
+
+    s = getParameter("jcterm.fg_bg");
+    if(s!=null){
+      String[][] tmp = JCTermSwingFrame.parseFgBg(s);
+      if(tmp!=null)
+        fg_bg = tmp;
+      else
+        System.err.println("invalid jcterm.fg_bg: "+s);
     }
 
     setVisible(true);
@@ -125,6 +136,7 @@ public class JCTermApplet extends JApplet {
     frame.setMaximizable(true);
 
     jctermsf.setFontSize(font_size);
+    jctermsf.setFgBg(fg_bg);
 
     frame.setLocation((getWidth()-frame.getWidth())/2,
                       (getHeight()-frame.getHeight())/2);
