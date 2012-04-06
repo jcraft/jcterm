@@ -527,4 +527,25 @@ public class JCTermSwing extends JPanel implements KeyListener, /*Runnable,*/
     if(graphics!=null)
       graphics.setColor(getForeGround());
   }
+
+  private static ConfigurationRepository defaultCR =
+    new ConfigurationRepository() {
+      private final Configuration conf = new Configuration();
+      public Configuration load(String name){
+        return conf;   
+      }
+      public void save(Configuration conf){
+      }
+    };
+
+  private static ConfigurationRepository cr = defaultCR;
+  public static synchronized void setCR(ConfigurationRepository _cr){
+    if(_cr == null)
+      _cr = defaultCR;
+    cr = _cr;
+  }
+
+  public static synchronized ConfigurationRepository getCR(){
+    return cr;
+  }
 }

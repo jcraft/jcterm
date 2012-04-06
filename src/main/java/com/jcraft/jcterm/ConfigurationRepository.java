@@ -1,6 +1,6 @@
 /* -*-mode:java; c-basic-offset:2; -*- */
 /* JCTerm
- * Copyright (C) 2002,2007 ymnk, JCraft,Inc.
+ * Copyright (C) 20012 ymnk, JCraft,Inc.
  *  
  * Written by: ymnk<ymnk@jcaft.com>
  *   
@@ -22,16 +22,14 @@
 
 package com.jcraft.jcterm;
 
-interface Frame {
-  final int SHELL=0;
-  final int SFTP=1;
-  final int EXEC=2;
-
-  void openFrame(int mode, String configName);
-  void setTitle(String name);
-  void setVisible(boolean visible);
-  void setSize(int w, int h);
-  int getWidth();
-  int getHeight();
-  void dispose();
+/**
+ * This interface abstracts where the configuration is stored to and
+ * retrived from.
+ *
+ * @see com.jcraft.jcterm.Configuration
+ * @see com.jcraft.jcterm.ConfigurationRepositoryFS
+ */
+public interface ConfigurationRepository {
+  Configuration load(String name);
+  void save(Configuration conf);
 }

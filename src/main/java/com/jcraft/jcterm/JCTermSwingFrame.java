@@ -41,14 +41,6 @@ public class JCTermSwingFrame extends JFrame
     counter=1;
   }
 
-  private static String[] destinations = new String[0]; 
-  static synchronized void setDestinations(String _destinations){
-    destinations = _destinations.split(",");
-    for(int i=0; i<destinations.length; i++){
-      destinations[i] = destinations[i].trim();
-    }
-  }
-
   private int mode=SHELL;
 
   private String xhost="127.0.0.1";
@@ -80,10 +72,7 @@ public class JCTermSwingFrame extends JFrame
 
   private Frame frame = this;
 
-  private int font_size = 14;
-
-  private String[][] fg_bg = {{"#000000","#ffffff"},
-                              {"#ffffff","#000000"}};
+  private String configName = "default";
 
   public boolean getCloseOnExit(){
     return close_on_exit;
@@ -97,7 +86,12 @@ public class JCTermSwingFrame extends JFrame
   }
 
   public JCTermSwingFrame(String name){
+    this(name, "default");
+  }
+
+  public JCTermSwingFrame(String name, String configName){
     super(name);
+    this.configName = configName;
 
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     enableEvents(AWTEvent.KEY_EVENT_MASK);
@@ -130,7 +124,7 @@ public class JCTermSwingFrame extends JFrame
     };
     addComponentListener(l);
 
-    setFontSize(font_size);
+    applyConfig(configName);
 
     openSession();
   }
@@ -148,7 +142,7 @@ public class JCTermSwingFrame extends JFrame
       try{
         int port=22;
         try{
-          String[] destinations = loadDestinations();
+          String[] destinations = JCTermSwing.getCR().load(configName).destinations;
           String _host = promptDestination(term, destinations);
           destination = _host;
           if(_host==null){
@@ -180,7 +174,9 @@ public class JCTermSwingFrame extends JFrame
           jschsession=JSchSession.getSession(user, null, host, port, ui, proxy);
           setCompression(compression);
 
-          saveDestination(destination);
+          Configuration conf = JCTermSwing.getCR().load(configName);
+          conf.addDestination(destination);
+          JCTermSwing.getCR().save(conf);
         }
         catch(Exception e){
           //System.out.println(e);
@@ -474,7 +470,13 @@ public class JCTermSwingFrame extends JFrame
   }
 
   public void setFontSize(int size){
-    this.font_size = size;
+    Configuration conf = JCTermSwing.getCR().load(configName);
+    conf.font_size = size;
+    JCTermSwing.getCR().save(conf);
+    _setFontSize(size);
+  }
+
+  private void _setFontSize(int size){
     int mwidth = frame.getWidth()-term.getTermWidth();
     int mheight = frame.getHeight()-term.getTermHeight();
     term.setFont("Monospaced-"+size);
@@ -556,7 +558,7 @@ public class JCTermSwingFrame extends JFrame
         openSession();
       }
       else {
-        frame.openFrame(_mode);
+        frame.openFrame(_mode, configName);
       }
     }
     else if(action.equals("HTTP...")){
@@ -743,25 +745,19 @@ public class JCTermSwingFrame extends JFrame
     JMenu mcolor=new JMenu("Color");
     final ActionListener mcolor_action = new ActionListener(){
       public void actionPerformed(ActionEvent e){
-        String _fg_bg=e.getActionCommand();
-        String[] tmp = _fg_bg.split(":");
-        if(tmp.length==2){
-          Color fg = JCTermSwing.toColor(tmp[0]);
-          Color bg = JCTermSwing.toColor(tmp[1]);
-          if(fg!=null && bg!=null)
-            setFgBg(fg, bg);
-        }
+        setFgBg(e.getActionCommand());
       }
     };
     mcolor.addMenuListener(new MenuListener(){
       public void menuSelected(MenuEvent me){
         JMenu jm = (JMenu)me.getSource();
+        String[] fg_bg = JCTermSwing.getCR().load(configName).fg_bg;
         for(int i=0; i < fg_bg.length; i++){
-          String[] tmp = fg_bg[i];
+          String[] tmp = fg_bg[i].split(":");
           JMenuItem mi = new JMenuItem("ABC");
           mi.setForeground(JCTermSwing.toColor(tmp[0]));
           mi.setBackground(JCTermSwing.toColor(tmp[1]));
-          mi.setActionCommand(tmp[0]+":"+tmp[1]);
+          mi.setActionCommand(fg_bg[i]);
           mi.addActionListener(mcolor_action);
           jm.add(mi);
         }
@@ -789,6 +785,7 @@ public class JCTermSwingFrame extends JFrame
       public void menuSelected(MenuEvent me){
         JMenuItem mi;
         JMenu jm = (JMenu)me.getSource();
+        int font_size = JCTermSwing.getCR().load(configName).font_size;
         mi = new JMenuItem("Smaller ("+(font_size-1)+")");;
         mi.setActionCommand(""+(font_size-1));
         mi.addActionListener(mfsize_action);
@@ -840,25 +837,8 @@ public class JCTermSwingFrame extends JFrame
     return term;
   }
 
-  private static synchronized void saveDestination(String d){
-    int i=0;
-    while(i<destinations.length){
-      if(d.equals(destinations[i]))
-        return;
-      i++;
-    }
-    String[] foo = new String[destinations.length+1];
-    System.arraycopy(destinations, 0, foo, 1, destinations.length);
-    foo[0]=d;
-    destinations=foo;
-  }
-
-  private String[] loadDestinations(){
-    return destinations;
-  }
-
-  public void openFrame(int _mode){
-    JCTermSwingFrame c = new JCTermSwingFrame("JCTerm");
+  public void openFrame(int _mode, String configName){
+    JCTermSwingFrame c = new JCTermSwingFrame("JCTerm", configName);
     c.mode=_mode;
     c.setXForwarding(true);
     c.setXPort(xport);
@@ -868,13 +848,17 @@ public class JCTermSwingFrame extends JFrame
     c.setResizable(true);
   }
 
-  void setFgBg(String[][] fg_bg){
-    this.fg_bg = fg_bg;
-    setFgBg(JCTermSwing.toColor(this.fg_bg[0][0]),
-            JCTermSwing.toColor(this.fg_bg[0][1]));
+  void setFgBg(String fg_bg){
+    Configuration conf = JCTermSwing.getCR().load(configName);
+    conf.addFgBg(fg_bg);
+    JCTermSwing.getCR().save(conf);
+    _setFgBg(fg_bg);
   }
 
-  private void setFgBg(Color fg, Color bg){
+  private void _setFgBg(String fg_bg){
+    String[] tmp = fg_bg.split(":");
+    Color fg = JCTermSwing.toColor(tmp[0]);
+    Color bg = JCTermSwing.toColor(tmp[1]);
     term.setForeGround(fg);
     term.setDefaultForeGround(fg);
     term.setBackGround(bg);
@@ -882,27 +866,6 @@ public class JCTermSwingFrame extends JFrame
     term.resetCursorGraphics();
     term.clear();
     term.redraw(0, 0, term.getWidth(), term.getHeight());
-  }
-
-  static String[][] parseFgBg(String fg_bg){
-    Vector<String[]> v = new Vector<String[]>();
-    String[] _fg_bg = fg_bg.split(",");
-    for(int i=0; i < _fg_bg.length; i++){
-      String[] tmp = _fg_bg[i].split(":");
-      if(tmp.length!=2)
-        continue;
-      Color fg = JCTermSwing.toColor(tmp[0]);
-      Color bg = JCTermSwing.toColor(tmp[1]);
-      if(fg!=null && bg!=null){ 
-        v.addElement(tmp);
-      }
-    }
-    if(v.size()==0) return null;
-    String[][] c = new String[v.size()][];
-    for(int i=0; i<v.size(); i++){
-      c[i]=v.elementAt(i);
-    }
-    return c;
   }
 
   private String promptDestination(JComponent term, String[] destinations){
@@ -942,7 +905,15 @@ public class JCTermSwingFrame extends JFrame
     this.frame=frame;
   }
 
+  void applyConfig(String configName){
+    this.configName = configName;
+    Configuration conf = JCTermSwing.getCR().load(configName);
+    _setFontSize(conf.font_size);
+    _setFgBg(conf.fg_bg[0]);
+  }
+
   public static void main(String[] arg){
+    JCTermSwing.setCR(new ConfigurationRepositoryFS());
     final JCTermSwingFrame frame=new JCTermSwingFrame("JCTerm");
     frame.setCloseOnExit(false);
     frame.setVisible(true);
