@@ -29,7 +29,7 @@ import java.awt.image.*;
 
 public class JCTermPanelG2D extends Panel implements KeyListener, Term{
 
-  static String COPYRIGHT="JCTerm 0.0.9\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"
+  static String COPYRIGHT="JCTerm 0.0.10\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"
       +"Official Homepage: http://www.jcraft.com/jcterm/\n"
       +"This software is licensed under GNU LGPL.";
 
