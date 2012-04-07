@@ -64,7 +64,7 @@ Then, please compile jcterm
   $ CLASSPATH=.:../../jsch-?.?.?/src javac com/jcraft/jcterm/*.java
 
 Ok, you can try it as follow,
-  $ CLASSPATH=.:../../jsch-?.?.?/src java com.jcraft.jcterm.JCTerm
+  $ CLASSPATH=.:../../jsch-?.?.?/src java com.jcraft.jcterm.JCTermSwingFrame
 
 If you need the packet compression support, you have to put the jar file of 
 jzlib(http://www.jcraft.com/jzlib) in the CLASSPATH.
