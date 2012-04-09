@@ -1,6 +1,22 @@
 ChangeLog of JCTerm
 ====================================================================
-Last modified: Tue Jun 19 07:19:37 UTC 2007
+Last modified: Wed Apr 11 09:55:50 UTC 2012
+
+	
+Changes since version 0.0.9:
+- changing foreground and background colors dynamically.
+- changing the font size dynamically.
+- the prompt for the destination will list previous inputs.
+- settings will be saved in ~/.ssh/jcterm.properties
+  if the configuration repository using file-system is chosen;
+    JCTermSwing.setCR(new ConfigurationRepositoryFS());
+- added build.xml
+- introduced properties for applet
+    jcterm.font_size
+    jcterm.fg_bg
+    jcterm.destinations
+    jcterm.config.repository
+    jcterm.config.name
 
 
 Changes since version 0.0.8:
