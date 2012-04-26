@@ -50,6 +50,10 @@ public class JCTermApplet extends JApplet {
       }
     }
 
+    s = getParameter("jcterm.config.use_ssh_agent");
+    if(s!=null&& s.equals("true"))
+      JSchSession.useSSHAgent(true);
+
     s = getParameter("jcterm.config.name");
     if(s!=null){
       configName = s;

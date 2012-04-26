@@ -32,7 +32,7 @@ import java.util.Vector;
 
 public class JCTermSwingFrame extends JFrame
                               implements Frame, ActionListener, Runnable{
-  static String COPYRIGHT="JCTerm 0.0.10\nCopyright (C) 2002,2012 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"
+  static String COPYRIGHT="JCTerm 0.0.11\nCopyright (C) 2002,2012 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"
       +"Official Homepage: http://www.jcraft.com/jcterm/\n"
       +"This software is licensed under GNU LGPL.";
 
@@ -914,6 +914,11 @@ public class JCTermSwingFrame extends JFrame
 
   public static void main(String[] arg){
     JCTermSwing.setCR(new ConfigurationRepositoryFS());
+
+    String s = System.getProperty("jcterm.config.use_ssh_agent");
+    if(s != null && s.equals("true"))
+      JSchSession.useSSHAgent(true);
+
     final JCTermSwingFrame frame=new JCTermSwingFrame("JCTerm");
     frame.setCloseOnExit(false);
     frame.setVisible(true);

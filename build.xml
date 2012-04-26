@@ -25,11 +25,17 @@
 
   <target name="compile" depends="init"
         description="compile the source" >
+    <available property="jschagentproxy.available"
+               classname="com.jcraft.jsch.agentproxy.connector.PageantConnector">
+      <classpath refid="project.class.path"/>
+    </available>
     <javac srcdir="${src}"
            destdir="${build}"
            classpathref="project.class.path"
            includeantruntime="false"
            debug="${javac.debug}">
+      <exclude name="**/JCTermIdentityRepository.java"
+               unless="jschagentproxy.available"/>
       <exclude name="**/JCTermMIDP.java"/>
       <exclude name="**/JCTermJ2MECDC.java"/>
       <exclude name="**/JCTermSWT.java"/>

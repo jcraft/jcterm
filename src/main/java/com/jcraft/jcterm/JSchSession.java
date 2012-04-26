@@ -135,4 +135,25 @@ public class JSchSession{
   public static void setSessionFactory(SessionFactory sf){
     sessionFactory=sf;
   }
+
+  static void useSSHAgent(boolean use){
+    IdentityRepository ir = null;
+    if(use){
+      try{
+        Class c = Class.forName("com.jcraft.jcterm.JCTermIdentityRepository");
+        ir = (IdentityRepository)(c.newInstance());
+      }
+      catch(java.lang.NoClassDefFoundError e){
+	System.err.println(e);
+      }
+      catch(Exception e){
+	System.err.println(e);
+      }
+      if(ir==null){
+        System.err.println("JCTermIdentityRepository is not available.");
+      }
+    }
+    if(ir!=null)
+      getJSch().setIdentityRepository(ir);
+  }
 }
