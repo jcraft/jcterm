@@ -32,7 +32,7 @@ import java.awt.image.*;
 public class JCTermAWT  extends Panel implements KeyListener,  /*Runnable,*/ Term{
 
   static String COPYRIGHT=
-"JCTerm 0.0.10\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"+
+"JCTerm 0.0.11\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"+
 "Official Homepage: http://www.jcraft.com/jcterm/\n"+
 "This software is licensed under GNU LGPL.";
 

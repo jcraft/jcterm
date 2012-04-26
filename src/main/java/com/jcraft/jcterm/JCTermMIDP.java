@@ -34,7 +34,7 @@ import java.util.Vector;
 
 public class JCTermMIDP extends MIDlet implements Runnable, CommandListener{
   static String COPYRIGHT=
-"JCTerm 0.0.10\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"+
+"JCTerm 0.0.11\nCopyright (C) 2002,2007 ymnk<ymnk@jcraft.com>, JCraft,Inc.\n"+
 "Official Homepage: http://www.jcraft.com/jcterm/\n"+
 "This software is licensed under GNU LGPL.\n"+
 "This software is using JSch for J2ME(http://j2me.jsch.org/) and\n"+
