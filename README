@@ -49,26 +49,20 @@ Features
 How To Try
 ==========
 This archive does not include java byte code, so please compile
-the source code by your self.  Suppose you have jsch-?.?.?.zip and 
-jcterm-?.?.?.zip
+the source code by your self.  Suppose you have jsch-?.?.?.zip. 
 
-First of all, please compile jsch.
-  $ unzip jsch-?.?.?.zip
-  $ cd jsch-?.?.?/src
-  $ javac com/jcraft/jsch/*java com/jcraft/jsch/jce/*java \
-          com/jcraft/jzlib/*.java
-
-Then, please compile jcterm
-  $ cd ../..
   $ unzip jcterm-?.?.?.zip
-  $ cd jcterm-?.?.?/src
-  $ CLASSPATH=.:../../jsch-?.?.?/src javac com/jcraft/jcterm/*.java
-
-Ok, you can try it as follow,
-  $ CLASSPATH=.:../../jsch-?.?.?/src java com.jcraft.jcterm.JCTermSwingFrame
+  $ cd jcterm-?.?.?/
+  $ mkdir lib/
+  $ (cd lib; \
+     wget \
+       http://sourceforge.net/projects/jsch/files/jsch.jar/0.1.48/jsch-0.1.48.jar)
+  $ ant
+  $ java -cp './lib/*.jar:./dist/lib/*.jar' \
+         com.jcraft.jcterm.JCTermSwingFrame
 
 If you need the packet compression support, you have to put the jar file of 
-jzlib(http://www.jcraft.com/jzlib) in the CLASSPATH.
+jzlib(http://www.jcraft.com/jzlib) into lib/ .
 
 
 Using ssh-agent
